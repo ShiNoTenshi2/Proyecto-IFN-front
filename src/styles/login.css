@@ -1,0 +1,88 @@
+/* ===== ESTILO BASE DEL LOGIN ===== */
+
+.login-bg {
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(circle at top, #3a0ca3 0%, #0d0d10 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(20, 20, 25, 0.85);
+  padding: 35px;
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 25px rgba(138, 43, 226, 0.35);
+  border: 1px solid rgba(138, 43, 226, 0.25);
+  animation: fadeIn 0.8s ease;
+}
+
+.login-title {
+  text-align: center;
+  color: white;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.login-form input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.login-form input:focus {
+  border-color: #8a2be2;
+  box-shadow: 0 0 10px rgba(138, 43, 226, 0.4);
+  outline: none;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 12px;
+  background: #8a2be2;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.25s ease;
+  font-weight: 600;
+}
+
+.login-form button:hover {
+  background: #9d4edd;
+  box-shadow: 0 0 12px rgba(138, 43, 226, 0.6);
+}
+
+.login-msg {
+  text-align: center;
+  margin-top: 12px;
+  color: #b36bff;
+  font-size: 0.9rem;
+}
+
+/* ===== Animación ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
