@@ -1,61 +1,135 @@
-import { useState } from "react";
-import { supabase } from "./lib/supabaseClient";
-import "./styles/login.css";
+// src/App.jsx
+import React, { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuthStore } from './store/authStore';
+import { supabase } from './lib/supabaseClient';
 
-export default function Login() {
-  const [correo, setCorreo] = useState("");
-  const [password, setPassword] = useState("");
-  const [mensaje, setMensaje] = useState("");
+// Auth
+import Login from './pages/auth/Login';
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMensaje("");
+// AdminPro
+import AdminProDashboard from './pages/adminPro/Dashboard';
+import GenerarConglomerados from './pages/adminPro/GenerarConglomerados';
+import RevisarConglomerados from './pages/adminPro/RevisarConglomerados';
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: correo,
-      password: password
-    });
+// AdminBrigadas (comentadas hasta que las tengas)
+// import AdminBrigadasDashboard from './pages/adminBrigadas/Dashboard';
+// import SolicitudesPendientes from './pages/adminBrigadas/SolicitudesPendientes';
+// import GestionBrigadistas from './pages/adminBrigadas/Brigadistas';
+// import ConglomeradosYBrigadas from './pages/adminBrigadas/ConglomeradosYBrigadas';
 
-    if (error) {
-      setMensaje("❌ Credenciales incorrectas o usuario inválido");
-      return;
-    }
+// Brigadista (comentadas hasta que las tengas)
+// import BrigadistaDashboard from './pages/brigadista/Dashboard';
+// import CompletarRegistro from './pages/brigadista/CompletarRegistro';
+// import Perfil from './pages/brigadista/Perfil';
 
-    setMensaje("⭐ Login exitoso");
+// Componente para rutas protegidas
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { user, isAuthenticated } = useAuthStore();
 
-    setTimeout(() => {
-      window.location.href = "/dashboard";
-    }, 800);
-  };
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
+  }
 
-  
+  if (allowedRoles && !allowedRoles.includes(user.rol)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children;
+};
+
+const App = () => {
+  const { setAuth, logout } = useAuthStore();
+
+  useEffect(() => {
+    // Escuchar cambios en la sesión de Supabase
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          // Usuario se autenticó
+          console.log('✅ Sesión iniciada');
+        } else if (event === 'SIGNED_OUT') {
+          // Usuario cerró sesión
+          logout();
+        } else if (event === 'TOKEN_REFRESHED') {
+          // Token renovado
+          console.log('🔄 Token renovado');
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [setAuth, logout]);
+
   return (
-    <div className="login-bg">
-      <div className="login-card">
-        <h2 className="login-title">Ingreso al Sistema</h2>
+    <BrowserRouter>
+      <Routes>
+        {/* Rutas públicas */}
+        <Route path="/login" element={<Login />} />
+        {/* <Route path="/brigadista/completar-registro" element={<CompletarRegistro />} /> */}
+        
+        {/* AdminPro */}
+        <Route
+          path="/admin-pro/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['AdminPro']}>
+              <AdminProDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-pro/generar"
+          element={
+            <ProtectedRoute allowedRoles={['AdminPro']}>
+              <GenerarConglomerados />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-pro/revisar"
+          element={
+            <ProtectedRoute allowedRoles={['AdminPro']}>
+              <RevisarConglomerados />
+            </ProtectedRoute>
+          }
+        />
 
-        <form onSubmit={handleSubmit} className="login-form">
-          <input
-            type="email"
-            placeholder="Correo institucional"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-            required
-          />
+        {/* AdminBrigadas - Descomenta cuando las tengas */}
+        {/*
+        <Route
+          path="/admin-brigadas/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['AdminBrigadas']}>
+              <AdminBrigadasDashboard />
+            </ProtectedRoute>
+          }
+        />
+        */}
 
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-
-          <button type="submit">Ingresar</button>
-
-          {mensaje && <p className="login-msg">{mensaje}</p>}
-        </form>
-      </div>
-    </div>
+        {/* Redirecciones */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route 
+          path="/unauthorized" 
+          element={
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              height: '100vh',
+              flexDirection: 'column' 
+            }}>
+              <h1>🚫 No autorizado</h1>
+              <p>No tienes permisos para acceder a esta página</p>
+              <button onClick={() => window.location.href = '/login'}>
+                Volver al login
+              </button>
+            </div>
+          } 
+        />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
-}
+};
+
+export default App;
