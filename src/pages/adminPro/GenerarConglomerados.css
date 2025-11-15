@@ -1,0 +1,222 @@
+/* src/pages/adminPro/GenerarConglomerados.css */
+
+.generar-container {
+  max-width: 900px;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: #111;
+}
+
+.page-subtitle {
+  color: #666;
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  margin-bottom: 2rem;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.generator-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.slider-container {
+  text-align: center;
+}
+
+.slider-label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.slider {
+  width: 100%;
+  max-width: 400px;
+  height: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.cantidad-display {
+  background: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+}
+
+.cantidad-numero {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #166534;
+  margin-bottom: 0.5rem;
+}
+
+.cantidad-detalle {
+  font-size: 1.1rem;
+  color: #374151;
+  margin: 0.5rem 0;
+}
+
+.cantidad-subdetalle {
+  color: #6b7280;
+  margin: 0;
+}
+
+.info-box {
+  background: #eff6ff;
+  border: 2px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.info-icon {
+  font-size: 2rem;
+}
+
+.info-title {
+  margin: 0 0 0.75rem 0;
+  color: #1e40af;
+  font-size: 1.1rem;
+}
+
+.info-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #1e3a8a;
+}
+
+.info-list li {
+  margin-bottom: 0.5rem;
+}
+
+.btn-generar {
+  width: 100%;
+  padding: 1.25rem;
+  background: #166534;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-generar:hover:not(:disabled) {
+  background: #14532d;
+}
+
+.btn-generar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.resultado-card {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.resultado-success {
+  text-align: center;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1rem;
+  background: #166534;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.success-title {
+  color: #14532d;
+  font-size: 1.75rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.success-message {
+  color: #166534;
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+}
+
+.resultado-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.resultado-stat {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  border: 2px solid #86efac;
+}
+
+.resultado-stat-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #166534;
+  margin-bottom: 0.25rem;
+}
+
+.resultado-stat-label {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.resultado-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.resultado-actions .btn-primary,
+.resultado-actions .btn-secondary {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+}
