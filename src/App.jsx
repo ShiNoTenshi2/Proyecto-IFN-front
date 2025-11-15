@@ -28,6 +28,7 @@ export default function Login() {
     }, 800);
   };
 
+  
   return (
     <div className="login-bg">
       <div className="login-card">
