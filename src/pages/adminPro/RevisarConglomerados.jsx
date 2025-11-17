@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/layout/AdminLayout';
 import { api } from '../../api/api';
 import { useAuthStore } from '../../store/authStore';
-//import './RevisarConglomerados.css';
+import '../../styles/RevisarConglomerados.css';
 
 const RevisarConglomerados = () => {
   const [conglomerados, setConglomerados] = useState([]);
@@ -116,7 +116,7 @@ const RevisarConglomerados = () => {
           <div className="search-box">
             <input
               type="text"
-              placeholder="🔍 Buscar por código..."
+              placeholder="Buscar por código..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="search-input"
@@ -146,27 +146,27 @@ const RevisarConglomerados = () => {
 
                   <div className="conglo-body">
                     <div className="conglo-info-row">
-                      <span className="info-label">📍 Latitud:</span>
+                      <span className="info-label">Latitud</span>
                       <span className="info-value">{c.lat.toFixed(6)}</span>
                     </div>
                     <div className="conglo-info-row">
-                      <span className="info-label">📍 Longitud:</span>
+                      <span className="info-label">Longitud</span>
                       <span className="info-value">{c.lon.toFixed(6)}</span>
                     </div>
                     {c.departamentos && (
                       <div className="conglo-info-row">
-                        <span className="info-label">🏛️ Departamento:</span>
+                        <span className="info-label">Departamento</span>
                         <span className="info-value">{c.departamentos.nombre}</span>
                       </div>
                     )}
                     {c.razon_rechazo && (
                       <div className="conglo-rechazo">
-                        <span className="rechazo-label">❌ Motivo:</span>
+                        <span className="rechazo-label">Motivo de Rechazo</span>
                         <p className="rechazo-text">{c.razon_rechazo}</p>
                       </div>
                     )}
                     <div className="conglo-info-row">
-                      <span className="info-label">📅 Creado:</span>
+                      <span className="info-label">Creado</span>
                       <span className="info-value">
                         {new Date(c.created_at).toLocaleDateString('es-CO')}
                       </span>
@@ -183,7 +183,7 @@ const RevisarConglomerados = () => {
                         }}
                         className="btn-aprobar"
                       >
-                        ✓ Aprobar
+                        Aprobar
                       </button>
                       <button
                         onClick={() => {
@@ -193,7 +193,7 @@ const RevisarConglomerados = () => {
                         }}
                         className="btn-rechazar"
                       >
-                        ✗ Rechazar
+                        Rechazar
                       </button>
                     </div>
                   )}
@@ -203,13 +203,12 @@ const RevisarConglomerados = () => {
           </div>
         )}
 
-        {/* Modal Aprobar/Rechazar */}
         {showModal && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2 className="modal-title">
-                  {modalType === 'aprobar' ? '✅ Aprobar Conglomerado' : '❌ Rechazar Conglomerado'}
+                  {modalType === 'aprobar' ? 'Aprobar Conglomerado' : 'Rechazar Conglomerado'}
                 </h2>
                 <button 
                   className="modal-close"
@@ -221,7 +220,7 @@ const RevisarConglomerados = () => {
 
               <div className="modal-body">
                 <div className="modal-info">
-                  <p className="modal-label">Código del Conglomerado:</p>
+                  <p className="modal-label">Código del Conglomerado</p>
                   <p className="modal-value">{selectedConglo?.codigo}</p>
                 </div>
 
