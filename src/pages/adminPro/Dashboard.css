@@ -161,3 +161,13 @@
   font-size: 1.25rem;
   color: #666;
 }
+
+/* ==== FIX para el texto del POPUP de Mapbox ==== */
+.mapboxgl-popup-content {
+  color: #000 !important;
+  font-size: 14px;
+}
+
+.mapboxgl-popup-content strong {
+  color: #000 !important;
+}

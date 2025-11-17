@@ -1,19 +1,33 @@
 // src/pages/adminPro/Dashboard.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '../../components/layout/AdminLayout';
 import { api } from '../../api/api';
 import './Dashboard.css';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const Dashboard = () => {
   const [estadisticas, setEstadisticas] = useState(null);
   const [conglomerados, setConglomerados] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const mapContainer = useRef(null);
+  const mapRef = useRef(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!loading && conglomerados.length > 0) {
+      initMap();
+    }
+  }, [loading, conglomerados]);
 
   const fetchData = async () => {
     try {
@@ -21,22 +35,99 @@ const Dashboard = () => {
         api.getEstadisticas(),
         api.getConglomerados()
       ]);
+
       setEstadisticas(stats);
-      setConglomerados(conglos.slice(0, 10));
+      setConglomerados(conglos);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  const initMap = () => {
+    if (mapRef.current) return;
+
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [-74.2973, 4.5709],
+      zoom: 4.6
+    });
+
+    mapRef.current.on("load", () => {
+      const geojson = {
+        type: "FeatureCollection",
+        features: conglomerados.map((c) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [c.lon, c.lat]
+          },
+          properties: {
+            codigo: c.codigo,
+            estado: c.estado || "pendiente",
+            departamento: c.departamentos?.nombre || "—"
+          }
+        }))
+      };
+
+      mapRef.current.addSource("conglomerados", {
+        type: "geojson",
+        data: geojson
+      });
+
+      mapRef.current.addLayer({
+        id: "puntos-conglomerados",
+        type: "circle",
+        source: "conglomerados",
+        paint: {
+          "circle-radius": 6,
+          "circle-color": [
+            "match",
+            ["get", "estado"],
+            "pendiente", "#f1c40f",
+            "aprobado", "#2ecc71",
+            "rechazado", "#e74c3c",
+            "#3498db"
+          ],
+          "circle-stroke-width": 1.5,
+          "circle-stroke-color": "#ffffff"
+        }
+      });
+
+      mapRef.current.on("click", "puntos-conglomerados", (e) => {
+        const props = e.features[0].properties;
+
+        new mapboxgl.Popup()
+          .setLngLat(e.lngLat)
+          .setHTML(`
+            <div style="font-size:14px">
+              <b>Código:</b> ${props.codigo}<br/>
+              <b>Estado:</b> ${props.estado}<br/>
+              <b>Departamento:</b> ${props.departamento}
+            </div>
+          `)
+          .addTo(mapRef.current);
+      });
+
+      mapRef.current.on("mouseenter", "puntos-conglomerados", () => {
+        mapRef.current.getCanvas().style.cursor = "pointer";
+      });
+
+      mapRef.current.on("mouseleave", "puntos-conglomerados", () => {
+        mapRef.current.getCanvas().style.cursor = "";
+      });
+    });
+  };
+
   const getEstadoBadge = (estado) => {
     const badges = {
-      pendiente: 'badge-warning',
-      aprobado: 'badge-success',
-      rechazado: 'badge-danger'
+      pendiente: "badge-warning",
+      aprobado: "badge-success",
+      rechazado: "badge-danger",
     };
-    return badges[estado] || 'badge-default';
+    return badges[estado] || "badge-default";
   };
 
   if (loading) {
@@ -50,6 +141,8 @@ const Dashboard = () => {
   return (
     <AdminLayout>
       <div className="dashboard-container">
+        
+        {/* HEADER */}
         <div className="dashboard-header">
           <div>
             <h1 className="page-title">Dashboard AdminPro</h1>
@@ -63,6 +156,7 @@ const Dashboard = () => {
           </button>
         </div>
 
+        {/* STATS */}
         {estadisticas && (
           <div className="stats-grid">
             <div className="stat-card">
@@ -99,10 +193,24 @@ const Dashboard = () => {
           </div>
         )}
 
+        {/* MAPA */}
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Mapa de Conglomerados</h2>
+          </div>
+          <div
+            ref={mapContainer}
+            className="mapbox-container"
+            style={{ height: "400px", borderRadius: "12px", overflow: "hidden" }}
+          ></div>
+        </div>
+
+        {/* TABLA */}
         <div className="card">
           <div className="card-header">
             <h2 className="card-title">Últimos Conglomerados Generados</h2>
           </div>
+
           <div className="table-container">
             <table className="data-table">
               <thead>
@@ -115,7 +223,7 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {conglomerados.map((c) => (
+                {conglomerados.slice(0, 10).map((c) => (
                   <tr key={c.id}>
                     <td className="font-mono">{c.codigo}</td>
                     <td>
@@ -133,6 +241,7 @@ const Dashboard = () => {
               </tbody>
             </table>
           </div>
+
           <div className="card-footer">
             <button 
               onClick={() => navigate('/admin-pro/revisar')}
@@ -142,6 +251,7 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
+
       </div>
     </AdminLayout>
   );
