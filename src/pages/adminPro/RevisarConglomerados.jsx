@@ -81,9 +81,9 @@ const RevisarConglomerados = () => {
 
   const getEstadoBadge = (estado) => {
     const badges = {
-      pendiente: { class: 'badge-warning', label: 'Pendiente' },
-      aprobado: { class: 'badge-success', label: 'Aprobado' },
-      rechazado: { class: 'badge-danger', label: 'Rechazado' }
+      pendiente: { class: 'badge-warning', label: 'Pendiente', emoji: '⏳' },
+      aprobado: { class: 'badge-success', label: 'Aprobado', emoji: '✅' },
+      rechazado: { class: 'badge-danger', label: 'Rechazado', emoji: '❌' }
     };
     return badges[estado] || badges.pendiente;
   };
@@ -116,7 +116,7 @@ const RevisarConglomerados = () => {
           <div className="search-box">
             <input
               type="text"
-              placeholder="Buscar por código..."
+              placeholder="🔍 Buscar por código..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="search-input"
@@ -132,49 +132,55 @@ const RevisarConglomerados = () => {
             <p className="empty-text">No se encontraron conglomerados</p>
           </div>
         ) : (
-          <div className="conglo-grid">
+          // 🆕 LISTA VERTICAL (NO CUADROS)
+          <div className="conglo-list-vertical">
             {conglomeradosFiltrados.map(c => {
               const badge = getEstadoBadge(c.estado);
               return (
-                <div key={c.id} className="conglo-card">
-                  <div className="conglo-header">
-                    <h3 className="conglo-codigo">{c.codigo}</h3>
-                    <span className={`badge ${badge.class}`}>
-                      {badge.label}
-                    </span>
-                  </div>
+                <div key={c.id} className="conglo-item-row">
+                  {/* Columna Izquierda: Info */}
+                  <div className="conglo-info-section">
+                    <div className="conglo-header-row">
+                      <h3 className="conglo-codigo">{c.codigo}</h3>
+                      <span className={`badge ${badge.class}`}>
+                        {badge.emoji} {badge.label}
+                      </span>
+                    </div>
 
-                  <div className="conglo-body">
-                    <div className="conglo-info-row">
-                      <span className="info-label">Latitud</span>
-                      <span className="info-value">{c.lat.toFixed(6)}</span>
-                    </div>
-                    <div className="conglo-info-row">
-                      <span className="info-label">Longitud</span>
-                      <span className="info-value">{c.lon.toFixed(6)}</span>
-                    </div>
-                    {c.departamentos && (
-                      <div className="conglo-info-row">
-                        <span className="info-label">Departamento</span>
-                        <span className="info-value">{c.departamentos.nombre}</span>
+                    <div className="conglo-details">
+                      <div className="detail-row">
+                        <span className="detail-label">📍 Latitud:</span>
+                        <span className="detail-value">{c.lat.toFixed(6)}</span>
                       </div>
-                    )}
+                      <div className="detail-row">
+                        <span className="detail-label">📍 Longitud:</span>
+                        <span className="detail-value">{c.lon.toFixed(6)}</span>
+                      </div>
+                      {c.departamentos && (
+                        <div className="detail-row">
+                          <span className="detail-label">🗺️ Departamento:</span>
+                          <span className="detail-value">{c.departamentos.nombre}</span>
+                        </div>
+                      )}
+                      <div className="detail-row">
+                        <span className="detail-label">📅 Creado:</span>
+                        <span className="detail-value">
+                          {new Date(c.created_at).toLocaleDateString('es-CO')}
+                        </span>
+                      </div>
+                    </div>
+
                     {c.razon_rechazo && (
-                      <div className="conglo-rechazo">
-                        <span className="rechazo-label">Motivo de Rechazo</span>
+                      <div className="conglo-rechazo-box">
+                        <span className="rechazo-label">❌ Motivo de Rechazo:</span>
                         <p className="rechazo-text">{c.razon_rechazo}</p>
                       </div>
                     )}
-                    <div className="conglo-info-row">
-                      <span className="info-label">Creado</span>
-                      <span className="info-value">
-                        {new Date(c.created_at).toLocaleDateString('es-CO')}
-                      </span>
-                    </div>
                   </div>
 
+                  {/* Columna Derecha: Acciones */}
                   {c.estado === 'pendiente' && (
-                    <div className="conglo-actions">
+                    <div className="conglo-actions-column">
                       <button
                         onClick={() => {
                           setSelectedConglo(c);
@@ -183,7 +189,7 @@ const RevisarConglomerados = () => {
                         }}
                         className="btn-aprobar"
                       >
-                        Aprobar
+                        ✅ Aprobar
                       </button>
                       <button
                         onClick={() => {
@@ -193,7 +199,7 @@ const RevisarConglomerados = () => {
                         }}
                         className="btn-rechazar"
                       >
-                        Rechazar
+                        ❌ Rechazar
                       </button>
                     </div>
                   )}
@@ -208,7 +214,7 @@ const RevisarConglomerados = () => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2 className="modal-title">
-                  {modalType === 'aprobar' ? 'Aprobar Conglomerado' : 'Rechazar Conglomerado'}
+                  {modalType === 'aprobar' ? '✅ Aprobar Conglomerado' : '❌ Rechazar Conglomerado'}
                 </h2>
                 <button 
                   className="modal-close"
